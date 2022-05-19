@@ -22,7 +22,7 @@ namespace WinFormsApp1
         const int MAP_WIDTH = 200;
         int[,] field = new int[WIDTH, HEIGHT];
         Vector2Float player;
-        float angle = 1.4f;
+        float angle = (float)Math.PI/2;
         float direction = 0f;
         int RAYS_AMOUNT = 600;
         const float ANGLE_HEIGHT = 0.9f;
@@ -42,9 +42,16 @@ namespace WinFormsApp1
                     {
                         field[i, j] = 1;
                     }
+                    else
+                    {
+                        field[i, j] = rand.Next(0, 2);
+                    }
                 }
             }
-
+            field[5, 5] = 0;
+            field[4, 5] = 0;
+            field[4, 4] = 0;
+            field[5, 4] = 0;
             pictureBox1.Size = new Size(MAP_WIDTH + 2, MAP_WIDTH + 2);
             player = new Vector2Float(5f, 5f);
         }
@@ -137,38 +144,38 @@ namespace WinFormsApp1
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            e.Graphics.FillRectangle(Brushes.LightBlue, new Rectangle(0, 0, Width, Height / 2));
-            e.Graphics.FillRectangle(Brushes.Gray, new Rectangle(0, Height / 2, Width, Height / 2));
-            //e.Graphics.FillRectangle(new LinearGradientBrush(new Point(0, 0), new Point(0, Height / 2), Color.FromArgb(0, 255, 250), Color.LightBlue), new Rectangle(0, 0, Width, Height / 2));
-            //e.Graphics.FillRectangle(new LinearGradientBrush(new Point(0, Height / 2), new Point(0, 0), Color.FromArgb(0, 0, 150), Color.Black), new Rectangle(0, Height / 2, Width, Height / 2));
+            //e.Graphics.FillRectangle(Brushes.LightBlue, new Rectangle(0, 0, Width, Height / 2));
+            //e.Graphics.FillRectangle(Brushes.Gray, new Rectangle(0, Height / 2, Width, Height / 2));
+            e.Graphics.FillRectangle(new LinearGradientBrush(new Point(0, 0), new Point(0, Height / 2), Color.FromArgb(0, 255, 250), Color.LightBlue), new Rectangle(0, 0, Width, Height / 2));
+            e.Graphics.FillRectangle(new LinearGradientBrush(new Point(0, Height / 2), new Point(0, 0), Color.FromArgb(0, 0, 150), Color.Black), new Rectangle(0, Height / 2, Width, Height / 2));
             int ray_index = 0;
             for (double i = direction - angle / 2; i <= direction + angle / 2; i += angle / (float)RAYS_AMOUNT)
             {
                 double len = CountRay(i);
 
-                for (int j = 0; j < figure_field.Count; j++)
-                {
-                    switch (figure_field[j].type)
-                    {
-                        case FigureType.Round:
-                             double nlen = CountRayRound(i, figure_field[j].points[0].X, figure_field[j].points[0].Y);
-                            if (nlen < len)
-                                len = nlen;
+                //for (int j = 0; j < figure_field.Count; j++)
+                //{
+                //    switch (figure_field[j].type)
+                //    {
+                //        case FigureType.Round:
+                //            double nlen = CountRayRound(i, figure_field[j].points[0].X, figure_field[j].points[0].Y);
+                //            if (nlen < len)
+                //                len = nlen;
 
-                            break;
-                        case FigureType.Closed:
-                            break;
-                        case FigureType.Opened:
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                //            break;
+                //        case FigureType.Closed:
+                //            break;
+                //        case FigureType.Opened:
+                //            break;
+                //        default:
+                //            break;
+                //    }
+                //}
                 double x = player.x + len * Math.Cos(i);
                 double y = player.y + len * Math.Sin(i);
                 double height = (int)((1 / len) * 1000);
                 //e.Graphics.FillRectangle(Brushes.Green, new Rectangle((int)(ray_index * (Width / RAYS_AMOUNT)), (int)(Height / 2 - height / 2), (int)(Width / RAYS_AMOUNT), (int)(height)));
-                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(0, (int)(255 / len > 255 ? 255 : 255 / len), 0)), new Rectangle((int)(ray_index * (Width / RAYS_AMOUNT)), (int)(Height / 2 - height / 2), (int)(Width / RAYS_AMOUNT), (int)(height)));
+                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(0, (int)((235 / (len*0.3)) > 235 ? 235 : (235 / (len*0.3))), 0)), new Rectangle((int)(ray_index * (Width / RAYS_AMOUNT)), (int)(Height / 2 - height / 2), (int)(Width / RAYS_AMOUNT), (int)(height)));
 
                 ray_index++;
             }

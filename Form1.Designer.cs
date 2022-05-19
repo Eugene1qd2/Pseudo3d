@@ -56,9 +56,8 @@ namespace WinFormsApp1
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 205);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 15);
+            this.label1.Size = new System.Drawing.Size(0, 15);
             this.label1.TabIndex = 1;
-            this.label1.Text = "label1";
             // 
             // Form1
             // 
