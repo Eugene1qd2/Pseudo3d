@@ -12,8 +12,6 @@ using Figures;
 
 namespace WinFormsApp1
 {
-
-
     public partial class Form1 : Form
     {
         List<Figure> figure_field;
@@ -25,15 +23,16 @@ namespace WinFormsApp1
         float angle = (float)Math.PI/2;
         float direction = 0f;
         int RAYS_AMOUNT = 600;
-        const float ANGLE_HEIGHT = 0.9f;
+        List<TeleportObject> teleports;
+
         public Form1()
         {
+            InitializeComponent();
+            Random rand = new Random((int)DateTime.Now.Ticks);
             figure_field = new List<Figure>();
             figure_field.Add(new Figure(new List<PointF>() { new PointF(5f, 5f) }, FigureType.Round));
             RAYS_AMOUNT = Width / 3;
             Keys_ = new bool[6];
-            Random rand = new Random((int)DateTime.Now.Ticks);
-            InitializeComponent();
             for (int i = 0; i < WIDTH; i++)
             {
                 for (int j = 0; j < HEIGHT; j++)
@@ -42,16 +41,25 @@ namespace WinFormsApp1
                     {
                         field[i, j] = 1;
                     }
-                    else
-                    {
-                        field[i, j] = rand.Next(0, 2);
-                    }
+                    //else
+                    //{
+                    //    field[i, j] = rand.Next(0, 2);
+                    //}
                 }
             }
             field[5, 5] = 0;
             field[4, 5] = 0;
             field[4, 4] = 0;
             field[5, 4] = 0;
+            teleports = new List<TeleportObject>();
+            teleports.Add(new TeleportObject(new Dictionary<int, PointF>() { { 1, new PointF(7f, 7f) }, { 2, new PointF(rand.Next(1, WIDTH-1), rand.Next(1, HEIGHT-1)) }, { 0, new PointF(rand.Next(1, WIDTH-1), rand.Next(1, HEIGHT-1)) } }));
+            teleports.ForEach(x =>
+            {
+                x.points.Values.ToList().ForEach(y =>
+                {
+                    field[(int)y.X, (int)y.Y] = 2;
+                });
+            });
             pictureBox1.Size = new Size(MAP_WIDTH + 2, MAP_WIDTH + 2);
             player = new Vector2Float(5f, 5f);
         }
@@ -62,7 +70,7 @@ namespace WinFormsApp1
             {
                 double x = player.x + c * Math.Cos(ray_angle);
                 double y = player.y + c * Math.Sin(ray_angle);
-                if (field[(int)(x), (int)(y)] != 0) break;
+                if (field[(int)(x), (int)(y)] == 1) break;
             }
             return c;
         }
@@ -81,6 +89,26 @@ namespace WinFormsApp1
         private void timer1_Tick(object sender, EventArgs e)
         {
             bool ShouldRefresh = false;
+            teleports.ForEach(x =>
+            {
+                for (int i = 0; i < x.points.Count; i++)
+                {
+                    if ((int)player.x==x.points.ElementAt(i).Value.X&& (int)player.y == x.points.ElementAt(i).Value.Y)
+                    {
+                        if (!x.JustTeleported)
+                        {
+                            player.x = x.points.ElementAt(x.points.ElementAt(i).Key).Value.X + 0.5f;
+                            player.y = x.points.ElementAt(x.points.ElementAt(i).Key).Value.Y + 0.5f;
+                            x.JustTeleported = true;
+                            ShouldRefresh = true;
+                        }
+                        return;
+                    }
+                    
+                }x.JustTeleported = false;
+
+                
+            });
             if (Keys_[0])
             {
                 direction += 0.05f;
@@ -174,11 +202,23 @@ namespace WinFormsApp1
                 double x = player.x + len * Math.Cos(i);
                 double y = player.y + len * Math.Sin(i);
                 double height = (int)((1 / len) * 1000);
-                //e.Graphics.FillRectangle(Brushes.Green, new Rectangle((int)(ray_index * (Width / RAYS_AMOUNT)), (int)(Height / 2 - height / 2), (int)(Width / RAYS_AMOUNT), (int)(height)));
-                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(0, (int)((235 / (len*0.3)) > 235 ? 235 : (235 / (len*0.3))), 0)), new Rectangle((int)(ray_index * (Width / RAYS_AMOUNT)), (int)(Height / 2 - height / 2), (int)(Width / RAYS_AMOUNT), (int)(height)));
+                switch(field[(int)x,(int)y])
+                {
+                    case 1:
+                        e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(0, (int)((235 / (len * 1)) > 235 ? 235 : (235 / (len * 1))), 0)), new Rectangle((int)(ray_index * (Width / RAYS_AMOUNT)), (int)(Height / 2 - height / 2), (int)(Width / RAYS_AMOUNT), (int)(height)));
+                        break;
+                    case 2:
+                        e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(100, (int)((235 / (len * 1)) > 235 ? 235 : (235 / (len * 1))),0, 0)), new Rectangle((int)(ray_index * (Width / RAYS_AMOUNT)), (int)(Height / 2 - height / 2), (int)(Width / RAYS_AMOUNT), (int)(height)));
+                        break;
+                    default:
+                        e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(100, (int)((235 / (len * 1)) > 235 ? 235 : (235 / (len * 1))), 0, 0)), new Rectangle((int)(ray_index * (Width / RAYS_AMOUNT)), (int)(Height / 2 - height / 2), (int)(Width / RAYS_AMOUNT), (int)(height)));
+                        break;
+
+                }
 
                 ray_index++;
             }
+            label1.Text = Math.Round(player.x,2).ToString() + "," + Math.Round(player.y, 2).ToString();
         }
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
@@ -193,6 +233,11 @@ namespace WinFormsApp1
                     {
                         e.Graphics.FillRectangle(Brushes.Gray, new Rectangle(i * (MAP_WIDTH / WIDTH) + 1, j * (MAP_WIDTH / HEIGHT) + 1, (MAP_WIDTH / WIDTH), MAP_WIDTH / HEIGHT));
                     }
+                    if (field[i, j] == 2)
+                    {
+                        e.Graphics.FillRectangle(Brushes.Red, new Rectangle(i * (MAP_WIDTH / WIDTH) + 1, j * (MAP_WIDTH / HEIGHT) + 1, (MAP_WIDTH / WIDTH), MAP_WIDTH / HEIGHT));
+                    }
+
 
                 }
             }
@@ -297,6 +342,18 @@ namespace WinFormsApp1
         {
             this.x = x;
             this.y = y;
+        }
+    }
+    public class TeleportObject
+    {
+        public Dictionary<int,PointF> points;
+        public bool JustTeleported = false;
+        public int last_index;
+
+        public TeleportObject(Dictionary<int, PointF> p)
+        {
+            points = p;
+            last_index = -1;
         }
     }
 }

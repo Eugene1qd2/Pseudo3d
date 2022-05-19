@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "fJeIHfdVfIhTNgMJRZpSSx5zj/yZI9f1wQePeYxHJ0+BefxOY8Yum2N3PihH2loWnmzJFmU7EwCXtH0ZxM5HTw==",
+  "dgSpecHash": "kRJVBvJvT40VTcJ+k/F22KqL30tMbQ1vIVE78B3kFQjCCW95KzyQDT3uI/Hlk8DuU13RmFiimkqDOkOH9fR9JA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\qawse\\Desktop\\3d\\Pseudo3d\\WinFormsApp1.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\user\\Desktop\\3dGame\\WinFormsApp1.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\user\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\5.0.0\\microsoft.aspnetcore.app.ref.5.0.0.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\5.0.0\\microsoft.windowsdesktop.app.ref.5.0.0.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\microsoft.netcore.app.ref\\5.0.0\\microsoft.netcore.app.ref.5.0.0.nupkg.sha512"
+  ],
   "logs": []
 }
