@@ -218,7 +218,6 @@ namespace WinFormsApp1
 
                 ray_index++;
             }
-            label1.Text = Math.Round(player.x,2).ToString() + "," + Math.Round(player.y, 2).ToString();
         }
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)

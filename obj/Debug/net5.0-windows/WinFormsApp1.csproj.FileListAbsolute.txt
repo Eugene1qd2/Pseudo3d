@@ -70,3 +70,21 @@ C:\Users\qawse\Desktop\3d\Pseudo3d\obj\Debug\net5.0-windows\ref\WinFormsApp1.dll
 C:\Users\qawse\Desktop\3d\Pseudo3d\obj\Debug\net5.0-windows\WinFormsApp1.pdb
 C:\Users\qawse\Desktop\3d\Pseudo3d\obj\Debug\net5.0-windows\WinFormsApp1.genruntimeconfig.cache
 C:\Users\user\Desktop\3dGame\obj\Debug\net5.0-windows\WinFormsApp1.Form1.resources
+C:\Users\kris1\source\repos\ray jenya\bin\Debug\net5.0-windows\WinFormsApp1.exe
+C:\Users\kris1\source\repos\ray jenya\bin\Debug\net5.0-windows\WinFormsApp1.deps.json
+C:\Users\kris1\source\repos\ray jenya\bin\Debug\net5.0-windows\WinFormsApp1.runtimeconfig.json
+C:\Users\kris1\source\repos\ray jenya\bin\Debug\net5.0-windows\WinFormsApp1.runtimeconfig.dev.json
+C:\Users\kris1\source\repos\ray jenya\bin\Debug\net5.0-windows\WinFormsApp1.dll
+C:\Users\kris1\source\repos\ray jenya\bin\Debug\net5.0-windows\ref\WinFormsApp1.dll
+C:\Users\kris1\source\repos\ray jenya\bin\Debug\net5.0-windows\WinFormsApp1.pdb
+C:\Users\kris1\source\repos\ray jenya\obj\Debug\net5.0-windows\WinFormsApp1.csproj.AssemblyReference.cache
+C:\Users\kris1\source\repos\ray jenya\obj\Debug\net5.0-windows\WinFormsApp1.Form1.resources
+C:\Users\kris1\source\repos\ray jenya\obj\Debug\net5.0-windows\WinFormsApp1.csproj.GenerateResource.cache
+C:\Users\kris1\source\repos\ray jenya\obj\Debug\net5.0-windows\WinFormsApp1.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\kris1\source\repos\ray jenya\obj\Debug\net5.0-windows\WinFormsApp1.AssemblyInfoInputs.cache
+C:\Users\kris1\source\repos\ray jenya\obj\Debug\net5.0-windows\WinFormsApp1.AssemblyInfo.cs
+C:\Users\kris1\source\repos\ray jenya\obj\Debug\net5.0-windows\WinFormsApp1.csproj.CoreCompileInputs.cache
+C:\Users\kris1\source\repos\ray jenya\obj\Debug\net5.0-windows\WinFormsApp1.dll
+C:\Users\kris1\source\repos\ray jenya\obj\Debug\net5.0-windows\ref\WinFormsApp1.dll
+C:\Users\kris1\source\repos\ray jenya\obj\Debug\net5.0-windows\WinFormsApp1.pdb
+C:\Users\kris1\source\repos\ray jenya\obj\Debug\net5.0-windows\WinFormsApp1.genruntimeconfig.cache
