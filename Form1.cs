@@ -20,7 +20,7 @@ namespace WinFormsApp1
         const int MAP_WIDTH = 200;
         int[,] field = new int[WIDTH, HEIGHT];
         Vector2Float player;
-        float angle = (float)Math.PI/2;
+        float angle = (float)Math.PI / 2;
         float direction = 0f;
         int RAYS_AMOUNT = 600;
         List<TeleportObject> teleports;
@@ -30,7 +30,7 @@ namespace WinFormsApp1
             InitializeComponent();
             Random rand = new Random((int)DateTime.Now.Ticks);
             figure_field = new List<Figure>();
-            figure_field.Add(new Figure(new List<PointF>() { new PointF(5f, 5f) }, FigureType.Round));
+            figure_field.Add(new Figure(new List<PointF>() { new PointF(10f, 10f) }, FigureType.Round));
             RAYS_AMOUNT = Width / 3;
             Keys_ = new bool[6];
             for (int i = 0; i < WIDTH; i++)
@@ -52,7 +52,7 @@ namespace WinFormsApp1
             field[4, 4] = 0;
             field[5, 4] = 0;
             teleports = new List<TeleportObject>();
-            teleports.Add(new TeleportObject(new Dictionary<int, PointF>() { { 1, new PointF(7f, 7f) }, { 2, new PointF(rand.Next(1, WIDTH-1), rand.Next(1, HEIGHT-1)) }, { 0, new PointF(rand.Next(1, WIDTH-1), rand.Next(1, HEIGHT-1)) } }));
+            teleports.Add(new TeleportObject(new Dictionary<int, PointF>() { { 1, new PointF(7f, 7f) }, { 2, new PointF(rand.Next(1, WIDTH - 1), rand.Next(1, HEIGHT - 1)) }, { 0, new PointF(rand.Next(1, WIDTH - 1), rand.Next(1, HEIGHT - 1)) } }));
             teleports.ForEach(x =>
             {
                 x.points.Values.ToList().ForEach(y =>
@@ -74,16 +74,55 @@ namespace WinFormsApp1
             }
             return c;
         }
-        public double CountRayRound(double ray_angle,double X,double Y)
+        public double CountRayRound(double ray_angle, double X, double Y)
         {
-            double c = 0;
-            for (; c < 100; c += .01)
+            double nx = player.x + Math.Cos(ray_angle) * 10;
+            double ny = player.y + Math.Sin(ray_angle) * 10;
+
+            double k = (ny - player.y) / (nx - player.x);
+            double b = player.y - k * player.x;
+
+            double a = k * k + 1;
+            double d = -2 * X + 2 * k * (b - Y);
+            double c = (b - Y) * (b - Y) - 1 + (X * X);
+
+            double disk = d * d - (4 * a * c);
+            if (disk < 0)
             {
-                double x = player.x + c * Math.Cos(ray_angle);
-                double y = player.y + c * Math.Sin(ray_angle);
-                if (Math.Pow(x-X,2) + Math.Pow(y - Y, 2) <= 1) break;
+                return 100000;
             }
-            return c;
+
+
+            double nx1 = (-d + Math.Sqrt(disk)) / (2 * a);
+            double ny1 = k * nx1 + b;
+
+            double nx2 = (-d - Math.Sqrt(disk)) / (2 * a);
+            double ny2 = k * nx2 + b;
+
+            double len1 = Math.Sqrt(Math.Pow(player.x - nx1, 2) + Math.Pow(player.y - ny1, 2));
+            double len2 = Math.Sqrt(Math.Pow(player.x - nx2, 2) + Math.Pow(player.y - ny2, 2));
+            bool len1_b = false;
+            bool len2_b = false;
+            float tangle = (float)(Math.Abs(nx1 - player.x) / Math.Abs(ny1 - player.y));
+            float an = (float)Math.Atan(tangle);
+            if (an > direction - angle / 2 && an < direction + angle / 2)
+            {
+                len1_b = true;
+            }
+            tangle = (float)(Math.Abs(nx2 - player.x) / Math.Abs(ny2 - player.y));
+            an = (float)Math.Atan(tangle);
+            if (an > direction - angle / 2 && an < direction + angle / 2)
+            {
+                len2_b = true;
+            }
+            if (len1_b && len2_b)
+            {
+                return len1 < len2 ? len1 : len2;
+            }
+            else
+            {
+                return len1_b ? len1 : len2_b ? len2 : 100000;
+            }
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -93,7 +132,7 @@ namespace WinFormsApp1
             {
                 for (int i = 0; i < x.points.Count; i++)
                 {
-                    if ((int)player.x==x.points.ElementAt(i).Value.X&& (int)player.y == x.points.ElementAt(i).Value.Y)
+                    if ((int)player.x == x.points.ElementAt(i).Value.X && (int)player.y == x.points.ElementAt(i).Value.Y)
                     {
                         if (!x.JustTeleported)
                         {
@@ -104,10 +143,11 @@ namespace WinFormsApp1
                         }
                         return;
                     }
-                    
-                }x.JustTeleported = false;
 
-                
+                }
+                x.JustTeleported = false;
+
+
             });
             if (Keys_[0])
             {
@@ -181,44 +221,45 @@ namespace WinFormsApp1
             {
                 double len = CountRay(i);
 
-                //for (int j = 0; j < figure_field.Count; j++)
-                //{
-                //    switch (figure_field[j].type)
-                //    {
-                //        case FigureType.Round:
-                //            double nlen = CountRayRound(i, figure_field[j].points[0].X, figure_field[j].points[0].Y);
-                //            if (nlen < len)
-                //                len = nlen;
+                for (int j = 0; j < figure_field.Count; j++)
+                {
+                    switch (figure_field[j].type)
+                    {
+                        case FigureType.Round:
+                            double nlen = CountRayRound(i, figure_field[j].points[0].X, figure_field[j].points[0].Y);
+                            if (nlen < len)
+                                len = nlen;
 
-                //            break;
-                //        case FigureType.Closed:
-                //            break;
-                //        case FigureType.Opened:
-                //            break;
-                //        default:
-                //            break;
-                //    }
-                //}
+                            break;
+                        case FigureType.Closed:
+                            break;
+                        case FigureType.Opened:
+                            break;
+                        default:
+                            break;
+                    }
+                }
                 double x = player.x + len * Math.Cos(i);
                 double y = player.y + len * Math.Sin(i);
                 double height = (int)((1 / len) * 1000);
-                switch(field[(int)x,(int)y])
-                {
-                    case 1:
-                        e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(0, (int)((235 / (len * 1)) > 235 ? 235 : (235 / (len * 1))), 0)), new Rectangle((int)(ray_index * (Width / RAYS_AMOUNT)), (int)(Height / 2 - height / 2), (int)(Width / RAYS_AMOUNT), (int)(height)));
-                        break;
-                    case 2:
-                        e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(100, (int)((235 / (len * 1)) > 235 ? 235 : (235 / (len * 1))),0, 0)), new Rectangle((int)(ray_index * (Width / RAYS_AMOUNT)), (int)(Height / 2 - height / 2), (int)(Width / RAYS_AMOUNT), (int)(height)));
-                        break;
-                    default:
-                        e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(100, (int)((235 / (len * 1)) > 235 ? 235 : (235 / (len * 1))), 0, 0)), new Rectangle((int)(ray_index * (Width / RAYS_AMOUNT)), (int)(Height / 2 - height / 2), (int)(Width / RAYS_AMOUNT), (int)(height)));
-                        break;
+                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(0, (int)((235 / (len * 1)) > 235 ? 235 : (235 / (len * 1))), 0)), new Rectangle((int)(ray_index * (Width / RAYS_AMOUNT)), (int)(Height / 2 - height / 2), (int)(Width / RAYS_AMOUNT), (int)(height)));
 
-                }
+                //switch (field[(int)x, (int)y])
+                //{
+                //    case 1:
+                //        break;
+                //    case 2:
+                //        e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(100, (int)((235 / (len * 1)) > 235 ? 235 : (235 / (len * 1))), 0, 0)), new Rectangle((int)(ray_index * (Width / RAYS_AMOUNT)), (int)(Height / 2 - height / 2), (int)(Width / RAYS_AMOUNT), (int)(height)));
+                //        break;
+                //    default:
+                //        e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(100, (int)((235 / (len * 1)) > 235 ? 235 : (235 / (len * 1))), 0, 0)), new Rectangle((int)(ray_index * (Width / RAYS_AMOUNT)), (int)(Height / 2 - height / 2), (int)(Width / RAYS_AMOUNT), (int)(height)));
+                //        break;
+
+                //}
 
                 ray_index++;
             }
-            label1.Text = Math.Round(player.x,2).ToString() + "," + Math.Round(player.y, 2).ToString();
+            label1.Text = Math.Round(player.x, 2).ToString() + "," + Math.Round(player.y, 2).ToString();
         }
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
@@ -251,7 +292,7 @@ namespace WinFormsApp1
                 double y = player.y + len * Math.Sin(i);
                 e.Graphics.DrawLine(Pens.White, (int)(MAP_WIDTH / WIDTH * player.x), (int)(MAP_WIDTH / HEIGHT * player.y), (int)(MAP_WIDTH / WIDTH * x), (int)(MAP_WIDTH / HEIGHT * y));
             }
-            
+
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -346,7 +387,7 @@ namespace WinFormsApp1
     }
     public class TeleportObject
     {
-        public Dictionary<int,PointF> points;
+        public Dictionary<int, PointF> points;
         public bool JustTeleported = false;
         public int last_index;
 
